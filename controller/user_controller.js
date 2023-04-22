@@ -3,6 +3,7 @@ const Users= db.Users;
 const CryptoJS = require('crypto-js');
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer")
+const SECRET = process.env.SECRET;
 require('dotenv').config()
 
 
@@ -40,11 +41,12 @@ function register(req, res){
 function login(req, res){
   const email = req.body.email
   const password = req.body.password
+  const role=req.body.role
   const hashed_password = CryptoJS.SHA256(password).toString()
   Users.findOne({where:{email,password:hashed_password}}).then((data)=>{
-      const  token = generateAccessToken(email,data.role,data.is_verified)
+      const  token = generateAccessToken(data.email,data.role)
       if(data.email===email && data.password===hashed_password){
-          res.send(JSON.stringify({status: "Logged in",jwt:token}))
+          res.send(JSON.stringify({status: "Logged in",jwt:token,role:data.role}))
       } else {
           res.send(JSON.stringify({status: "Wrong credentials"}));
       }
@@ -88,9 +90,8 @@ function login(req, res){
   }
  
 
-const Sequelize = require('sequelize')
-const sequelize = new Sequelize("mydb",null,null,{dialect:"sqlite", storage:"database.db"})
-const SECRET = process.env.SECRET
+
+
 function authenticateToken(req, res, next){
     const token= req.headers.authorization
     if(token ==  null){
@@ -99,6 +100,7 @@ function authenticateToken(req, res, next){
     jwt.verify(token, SECRET, (err, user)=>{
         if(err){
             return res.sendStatus(403)
+
         }
         if(user.role !== 'admin'){
             return res.sendStatus(403)
@@ -108,6 +110,5 @@ function authenticateToken(req, res, next){
     })
 }
 
-
-  module.exports={generateAccessToken,register,login,verify}
+  module.exports={authenticateToken, generateAccessToken,register,login,verify}
  

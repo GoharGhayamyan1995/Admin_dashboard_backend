@@ -14,7 +14,7 @@ const getCategory = async (req, res) => {
   const createCategory = (req, res) => {
     const category = {
       name: req.body.name,
-      description: req.body.description
+    
     };
   
     Category.create(category)
@@ -43,23 +43,15 @@ const getCategory = async (req, res) => {
     }
   };
     
-  const updateCategory = async (req, res) => {
-    try {
-      const { name} = req.body;
-      const [rowsUpdated, [updatedCategory]] = await Category.update(
-        { name},
-        { returning: true, where: { id: req.params.id } }
-      );
-      if (rowsUpdated) {
-        res.json(updatedCategory);
-      } else {
-        res.status(404).json({ error: 'category not found' });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Server error' });
-    }
-  };
+  function updateCategory(req,res){
+    const {id}=req.params
+    const {name} = req.body
+    Category.update({name:name}, {where:{id:id}}).then((category)=>{
+        res.status(201).json(category)
+    }).catch((err)=>{
+        res.status(500).json({error:err.message})
+    })
+}
 
   const deleteCategory = async (req, res) => {
     try {

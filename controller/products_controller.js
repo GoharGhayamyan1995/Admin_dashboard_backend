@@ -1,4 +1,4 @@
-
+const fs=require('fs')
 const db = require('../models');
 const Product= db.Product;
 
@@ -14,15 +14,18 @@ async function getProduct(req, res) {
 
 
 async function createProduct(req, res) {
-  const { name, price,image, categoryId } = req.body;
+  const { name, price, categoryId } = req.body;
+  const image = `uploads/products/${req.file.filename}`
   try {
-    const product = await Product.create({ name, price, image,categoryId });
+  
+    const product = await Product.create({ name, price,image,categoryId });
     res.json(product);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server Error' });
   }
 }
+
   async function getProductById(req, res) {
     const { id } = req.params;
     try {
@@ -37,27 +40,17 @@ async function createProduct(req, res) {
       res.status(500).json({ message: 'Server Error' });
     }
   }
+  function updateProduct(req, res){
+    const{id}=req.params
+    const {name, price, image,categoryId}=req.body
+    Product.update({name:name, price:price, image:image,categoryId:categoryId}, {where:{id:id}}).then((product)=>{
+        res.status(201).json(product)
+    }).catch((err)=>{
+        res.status(500).json({error:err.message})
+    })
+}
     
-  async function updateProduct(req, res) {
-    const { id } = req.params;
-    const { name, price, image,categoryId } = req.body;
-    try {
-      const product = await Product.findByPk(id);
-      if (!product) {
-        res.status(404).json({ message: 'Product not found' });
-      } else {
-        product.name = name;
-        product.price = price;
-        product.image = image;
-        product.categoryId = categoryId;
-        await product.save();
-        res.json(product);
-      }
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Server Error' });
-    }
-  }
+  
 
   async function deleteProduct(req, res) {
     const { id } = req.params;

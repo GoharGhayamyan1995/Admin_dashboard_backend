@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 const CryptoJS = require('crypto-js');
 const sequelize=new Sequelize("mydb",null,null,{dialect:"sqlite", storage:"database.db"})
 const Users = require('./models/users')(sequelize,DataTypes)
+app.use('/uploads', express.static('./_uploads'));
 const products = require('./models/product')
 const category=require('./models/category')
 const categories_routes=require('./routes/categories_routes')
