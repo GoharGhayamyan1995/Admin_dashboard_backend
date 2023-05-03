@@ -14,10 +14,8 @@ const getCategory = async (req, res) => {
   const createCategory = (req, res) => {
     const category = {
       name: req.body.name,
-    
-    };
-  
-    Category.create(category)
+     };
+   Category.create(category)
       .then(data => {
         res.send(data);
       })

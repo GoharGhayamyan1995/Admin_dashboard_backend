@@ -25,9 +25,7 @@ function register(req, res){
         if(user){
             return res.status(400).json({error:"Email already exists"})
         }
-      
- 
-  const hashed_password = CryptoJS.SHA256(password).toString();
+ const hashed_password = CryptoJS.SHA256(password).toString();
   Users.create({email,password:hashed_password,role:"user", is_verified:0}).then((data)=>{
     let token = generateAccessToken(email, 0)
             send_mail(email, token)

@@ -14,8 +14,7 @@ async function getProduct(req, res) {
 
 
 async function createProduct(req, res) {
-  const { name, price, categoryId } = req.body;
-  const image = `uploads/products/${req.file.filename}`
+  const { name, price,image, categoryId } = req.body;
   try {
   
     const product = await Product.create({ name, price,image,categoryId });
@@ -40,6 +39,7 @@ async function createProduct(req, res) {
       res.status(500).json({ message: 'Server Error' });
     }
   }
+
   function updateProduct(req, res){
     const{id}=req.params
     const {name, price, image,categoryId}=req.body
@@ -50,8 +50,6 @@ async function createProduct(req, res) {
     })
 }
     
-  
-
   async function deleteProduct(req, res) {
     const { id } = req.params;
     try {
